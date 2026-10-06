@@ -108,7 +108,7 @@ export async function onRequestPost(context) {
       return jsonResponse({ code: 200, message: 'Import successful, but no sites were found to import.' });
     }
 
-    const db = env.NAV_DB;
+    const db = env.NAV_DB1;
     // Cloudflare D1 限制单条语句变量数为 100。
     // 在导入过程中的 SELECT ... WHERE IN (...) 查询中，
     // 将分块大小设为 50 以确保绝对安全且不影响效率。

@@ -8,7 +8,7 @@ export async function onRequestPost(context) {
     return errorResponse('Unauthorized', 401);
   }
 
-  // reorder 之外的操作都是单次 env.NAV_DB.batch()（D1 隐式单事务），失败即全无变更，
+  // reorder 之外的操作都是单次 env.NAV_DB1.batch()（D1 隐式单事务），失败即全无变更，
   // 成功后就地打一次脏标记即可。reorder 分块提交属于多事务写入，改用 finally 打标：
   // KV 对同一个 key 限制每秒一次写入，同一请求内写两次可能被静默丢弃，
   // 而 finally 一次就能覆盖成功与抛错两种出口。
@@ -40,11 +40,11 @@ export async function onRequestPost(context) {
       chunks.forEach(chunk => {
         const placeholders = chunk.map(() => '?').join(',');
         statements.push(
-          env.NAV_DB.prepare(`DELETE FROM sites WHERE id IN (${placeholders})`).bind(...chunk)
+          env.NAV_DB1.prepare(`DELETE FROM sites WHERE id IN (${placeholders})`).bind(...chunk)
         );
       });
 
-      await env.NAV_DB.batch(statements);
+      await env.NAV_DB1.batch(statements);
       await markHomeCacheDirty(env, 'all');
       
       return jsonResponse({
@@ -58,7 +58,7 @@ export async function onRequestPost(context) {
         return errorResponse('分类 ID 是必填项', 400);
       }
 
-      const category = await env.NAV_DB.prepare('SELECT catelog, is_private FROM category WHERE id = ?').bind(categoryId).first();
+      const category = await env.NAV_DB1.prepare('SELECT catelog, is_private FROM category WHERE id = ?').bind(categoryId).first();
       if (!category) {
         return errorResponse('找不到分类', 404);
       }
@@ -73,11 +73,11 @@ export async function onRequestPost(context) {
       chunks.forEach(chunk => {
         const placeholders = chunk.map(() => '?').join(',');
         statements.push(
-          env.NAV_DB.prepare(`${baseSql} WHERE id IN (${placeholders})`).bind(...baseParams, ...chunk)
+          env.NAV_DB1.prepare(`${baseSql} WHERE id IN (${placeholders})`).bind(...baseParams, ...chunk)
         );
       });
 
-      await env.NAV_DB.batch(statements);
+      await env.NAV_DB1.batch(statements);
       await markHomeCacheDirty(env, 'all');
 
       return jsonResponse({
@@ -96,11 +96,11 @@ export async function onRequestPost(context) {
       chunks.forEach(chunk => {
         const placeholders = chunk.map(() => '?').join(',');
         statements.push(
-          env.NAV_DB.prepare(`UPDATE sites SET is_private = ? WHERE id IN (${placeholders})`).bind(isPrivateValue, ...chunk)
+          env.NAV_DB1.prepare(`UPDATE sites SET is_private = ? WHERE id IN (${placeholders})`).bind(isPrivateValue, ...chunk)
         );
       });
 
-      await env.NAV_DB.batch(statements);
+      await env.NAV_DB1.batch(statements);
       await markHomeCacheDirty(env, 'all');
 
       return jsonResponse({
@@ -125,14 +125,14 @@ export async function onRequestPost(context) {
         }
 
         reorderStatements.push(
-          env.NAV_DB.prepare('UPDATE sites SET sort_order = ?, update_time = CURRENT_TIMESTAMP WHERE id = ?')
+          env.NAV_DB1.prepare('UPDATE sites SET sort_order = ?, update_time = CURRENT_TIMESTAMP WHERE id = ?')
             .bind(sortOrder, id)
         );
       }
 
       dbMayHaveChanged = true;
       for (let i = 0; i < reorderStatements.length; i += REORDER_CHUNK_SIZE) {
-        await env.NAV_DB.batch(reorderStatements.slice(i, i + REORDER_CHUNK_SIZE));
+        await env.NAV_DB1.batch(reorderStatements.slice(i, i + REORDER_CHUNK_SIZE));
       }
 
       return jsonResponse({

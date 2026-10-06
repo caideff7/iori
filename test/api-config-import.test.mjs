@@ -20,8 +20,8 @@ function createKv(initialEntries = {}) {
 
 test('import rejects bodies over the declared byte limit', async () => {
   const env = {
-    NAV_AUTH: createKv({ session_token: '1' }),
-    NAV_DB: {},
+    NAV_AUTH1: createKv({ session_token: '1' }),
+    NAV_DB1: {},
   };
   const request = new Request('https://example.com/api/config/import', {
     method: 'POST',
@@ -114,7 +114,7 @@ test('import restores categories when a backup contains no bookmarks', async () 
 
   const response = await onRequestPost({
     request,
-    env: { NAV_AUTH: createKv({ session_token: '1' }), NAV_DB: db },
+    env: { NAV_AUTH1: createKv({ session_token: '1' }), NAV_DB1: db },
   });
   const body = await response.json();
 
@@ -178,8 +178,8 @@ test('import override updates the database URL form that actually exists', async
   });
 
   const env = {
-    NAV_AUTH: createKv({ session_token: '1' }),
-    NAV_DB: db,
+    NAV_AUTH1: createKv({ session_token: '1' }),
+    NAV_DB1: db,
   };
 
   const response = await onRequestPost({ request, env });
@@ -245,8 +245,8 @@ test('import override without sort_order keeps the existing sort order', async (
   });
 
   const env = {
-    NAV_AUTH: createKv({ session_token: '1' }),
-    NAV_DB: db,
+    NAV_AUTH1: createKv({ session_token: '1' }),
+    NAV_DB1: db,
   };
 
   const response = await onRequestPost({ request, env });
@@ -320,8 +320,8 @@ test('import forces public children and sites private under a private parent cat
   });
 
   const env = {
-    NAV_AUTH: createKv({ session_token: '1' }),
-    NAV_DB: db,
+    NAV_AUTH1: createKv({ session_token: '1' }),
+    NAV_DB1: db,
   };
 
   const response = await onRequestPost({ request, env });
@@ -395,8 +395,8 @@ test('import maps Chrome root bookmarks into a root category', async () => {
   });
 
   const env = {
-    NAV_AUTH: createKv({ session_token: '1' }),
-    NAV_DB: db,
+    NAV_AUTH1: createKv({ session_token: '1' }),
+    NAV_DB1: db,
   };
 
   const response = await onRequestPost({ request, env });
@@ -470,8 +470,8 @@ test('import skips overlong bookmark rows instead of writing them', async () => 
   });
 
   const env = {
-    NAV_AUTH: createKv({ session_token: '1' }),
-    NAV_DB: db,
+    NAV_AUTH1: createKv({ session_token: '1' }),
+    NAV_DB1: db,
   };
 
   const response = await onRequestPost({ request, env });
@@ -546,8 +546,8 @@ test('import deduplicates the same URL with and without trailing slash', async (
   });
 
   const env = {
-    NAV_AUTH: createKv({ session_token: '1' }),
-    NAV_DB: db,
+    NAV_AUTH1: createKv({ session_token: '1' }),
+    NAV_DB1: db,
   };
 
   const response = await onRequestPost({ request, env });
@@ -624,8 +624,8 @@ test('import deduplicates non-root URLs with and without trailing slash', async 
   });
 
   const env = {
-    NAV_AUTH: createKv({ session_token: '1' }),
-    NAV_DB: db,
+    NAV_AUTH1: createKv({ session_token: '1' }),
+    NAV_DB1: db,
   };
 
   const response = await onRequestPost({ request, env });
@@ -649,7 +649,7 @@ function createDirtyTrackingEnv({ failSiteBatchAfter = Infinity } = {}) {
   let siteBatchCount = 0;
 
   const env = {
-    NAV_AUTH: {
+    NAV_AUTH1: {
       store,
       async get(key) {
         return store.get(key) ?? null;
@@ -662,7 +662,7 @@ function createDirtyTrackingEnv({ failSiteBatchAfter = Infinity } = {}) {
         store.delete(key);
       },
     },
-    NAV_DB: {
+    NAV_DB1: {
       prepare(sql) {
         const createStatement = (params = []) => ({
           sql,
@@ -754,8 +754,8 @@ test('import marks the home cache dirty when a site batch fails midway', async (
 
   assert.equal(response.status, 500);
   assert.match(body.message, /D1 batch failed/);
-  assert.equal(env.NAV_AUTH.store.has(getHomeDirtyKey('public')), true);
-  assert.equal(env.NAV_AUTH.store.has(getHomeDirtyKey('private')), true);
+  assert.equal(env.NAV_AUTH1.store.has(getHomeDirtyKey('public')), true);
+  assert.equal(env.NAV_AUTH1.store.has(getHomeDirtyKey('private')), true);
   assert.equal(
     events.filter(event => event === `dirty:${getHomeDirtyKey('public')}`).length,
     1,

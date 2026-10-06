@@ -20,7 +20,7 @@ export async function onRequestGet({ env }) {
   try {
     const keys = getSettingsKeys();
     const placeholders = keys.map(() => '?').join(',');
-    const { results } = await env.NAV_DB.prepare(`SELECT key, value FROM settings WHERE key IN (${placeholders})`).bind(...keys).all();
+    const { results } = await env.NAV_DB1.prepare(`SELECT key, value FROM settings WHERE key IN (${placeholders})`).bind(...keys).all();
     layoutSettings = parseSettings(results);
   } catch (e) {
     // 表不存在时使用默认值

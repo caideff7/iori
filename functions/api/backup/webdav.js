@@ -79,7 +79,7 @@ function validateRestorableBackup(data, byteLength) {
 
 async function loadWebdavConfig(env) {
   const placeholders = WEBDAV_KEYS.map(() => '?').join(',');
-  const { results } = await env.NAV_DB
+  const { results } = await env.NAV_DB1
     .prepare(`SELECT key, value FROM settings WHERE key IN (${placeholders})`)
     .bind(...WEBDAV_KEYS)
     .all();

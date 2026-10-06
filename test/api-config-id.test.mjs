@@ -59,8 +59,8 @@ test('PUT /api/config/:id rejects updates to a missing category', async () => {
     }),
   });
   const env = {
-    NAV_AUTH: createKv({ session_token: '1' }),
-    NAV_DB: createDb({ category: null }),
+    NAV_AUTH1: createKv({ session_token: '1' }),
+    NAV_DB1: createDb({ category: null }),
   };
 
   const response = await onRequestPut({ request, env, params: { id: '1' } });
@@ -86,8 +86,8 @@ test('PUT /api/config/:id rejects unsafe bookmark URLs before updating', async (
     }),
   });
   const env = {
-    NAV_AUTH: createKv({ session_token: '1' }),
-    NAV_DB: createDb({ category: { catelog: 'Default', is_private: 0 } }),
+    NAV_AUTH1: createKv({ session_token: '1' }),
+    NAV_DB1: createDb({ category: { catelog: 'Default', is_private: 0 } }),
   };
 
   const response = await onRequestPut({ request, env, params: { id: '1' } });

@@ -57,8 +57,8 @@ test('public submit does not expose duplicate site URL existence', async () => {
 
   const env = {
     ENABLE_PUBLIC_SUBMISSION: 'true',
-    NAV_AUTH: createKv(),
-    NAV_DB: db,
+    NAV_AUTH1: createKv(),
+    NAV_DB1: db,
   };
 
   const response = await onRequestPost({ request, env });
@@ -109,8 +109,8 @@ test('public submit rejects overlong bookmark text before writing pending site',
     request,
     env: {
       ENABLE_PUBLIC_SUBMISSION: 'true',
-      NAV_AUTH: createKv(),
-      NAV_DB: db,
+      NAV_AUTH1: createKv(),
+      NAV_DB1: db,
     },
   });
   const body = await response.json();
@@ -156,8 +156,8 @@ test('public submit requires Turnstile token when configured', async () => {
       ENABLE_PUBLIC_SUBMISSION: 'true',
       TURNSTILE_SITE_KEY: 'site-key',
       TURNSTILE_SECRET_KEY: 'secret-key',
-      NAV_AUTH: createKv(),
-      NAV_DB: db,
+      NAV_AUTH1: createKv(),
+      NAV_DB1: db,
     },
   });
   const body = await response.json();
@@ -221,8 +221,8 @@ test('public submit verifies Turnstile token before inserting pending site', asy
         ENABLE_PUBLIC_SUBMISSION: 'true',
         TURNSTILE_SITE_KEY: 'site-key',
         TURNSTILE_SECRET_KEY: 'secret-key',
-        NAV_AUTH: createKv(),
-        NAV_DB: db,
+        NAV_AUTH1: createKv(),
+        NAV_DB1: db,
       },
     });
     const body = await response.json();

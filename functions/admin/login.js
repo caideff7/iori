@@ -15,7 +15,7 @@ function escapeHTML(str) {
 
 async function createAdminSession(env, ttl = 86400) {
   const token = crypto.randomUUID();
-  await env.NAV_AUTH.put(`session_${token}`, Date.now().toString(), { expirationTtl: ttl });
+  await env.NAV_AUTH1.put(`session_${token}`, Date.now().toString(), { expirationTtl: ttl });
   return token;
 }
 
@@ -169,8 +169,8 @@ export async function onRequestPost(context) {
       return renderLoginPage(turnstileResult.message, env);
     }
 
-    const storedUsername = await env.NAV_AUTH.get('admin_username');
-    const storedPassword = await env.NAV_AUTH.get('admin_password');
+    const storedUsername = await env.NAV_AUTH1.get('admin_username');
+    const storedPassword = await env.NAV_AUTH1.get('admin_password');
 
     if (!storedUsername || !storedPassword) {
       console.error('Admin credentials not found in KV');
@@ -187,7 +187,7 @@ export async function onRequestPost(context) {
 
       // 生成 CSRF token 并存入 KV，与 session 使用相同 TTL
       const csrfToken = crypto.randomUUID();
-      await env.NAV_AUTH.put(`csrf_${token}`, csrfToken, { expirationTtl: ttl });
+      await env.NAV_AUTH1.put(`csrf_${token}`, csrfToken, { expirationTtl: ttl });
 
       return new Response(null, {
         status: 302,

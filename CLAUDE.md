@@ -26,8 +26,8 @@ npm run version            # 手动重新计算静态资源 ?v= 哈希
 npm run changelog          # 根据 git log 自动更新 README 更新日志区块
 
 # D1 数据库（本地 / 远程）
-npx wrangler d1 execute book --local  --file=schema.sql
-npx wrangler d1 execute book --remote --file=schema.sql
+npx wrangler d1 execute book1 --local  --file=schema.sql
+npx wrangler d1 execute book1 --remote --file=schema.sql
 ```
 
 > 本地开发依赖 `wrangler.toml`（在 `.gitignore` 中），首次需自行填入 D1 / KV 资源 ID。
@@ -124,8 +124,8 @@ wrangler.toml             # 已 gitignore，本地需自填 D1/KV id
 
 | 绑定名 | 类型 | 必需 |
 | :--- | :--- | :--- |
-| `NAV_DB` | D1 数据库（默认名 `book`） | ✅ |
-| `NAV_AUTH` | KV（同时存 session / CSRF / 限流计数器 / settings 缓存 / home HTML 缓存） | ✅ |
+| `NAV_DB1` | D1 数据库（默认名 `book1`） | ✅ |
+| `NAV_AUTH1` | KV（同时存 session / CSRF / 限流计数器 / settings 缓存 / home HTML 缓存） | ✅ |
 
 可选环境变量：`ENABLE_PUBLIC_SUBMISSION`、`SITE_NAME`、`SITE_DESCRIPTION`、`FOOTER_TEXT`、`ICON_API`、`AI_REQUEST_DELAY`。
 后台凭据通过 KV 条目 `admin_username` / `admin_password` 配置。

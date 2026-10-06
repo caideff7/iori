@@ -71,7 +71,7 @@ test('POST /admin/login keeps working when Turnstile is not configured', async (
       password: 'password',
       duration: '1',
     }),
-    env: { NAV_AUTH: kv },
+    env: { NAV_AUTH1: kv },
   });
 
   assert.equal(response.status, 302);
@@ -90,7 +90,7 @@ test('POST /admin/login rejects unsupported session durations', async () => {
       password: 'password',
       duration: '999999',
     }),
-    env: { NAV_AUTH: kv },
+    env: { NAV_AUTH1: kv },
   });
   const html = await response.text();
 
@@ -111,7 +111,7 @@ test('POST /admin/login accepts the maximum listed session duration', async () =
       password: 'password',
       duration: '90',
     }),
-    env: { NAV_AUTH: kv },
+    env: { NAV_AUTH1: kv },
   });
 
   assert.equal(response.status, 302);
@@ -132,7 +132,7 @@ test('POST /admin/login requires Turnstile token when configured', async () => {
       duration: '1',
     }),
     env: {
-      NAV_AUTH: kv,
+      NAV_AUTH1: kv,
       TURNSTILE_SITE_KEY: 'site-key',
       TURNSTILE_SECRET_KEY: 'secret-key',
     },
@@ -169,7 +169,7 @@ test('POST /admin/login verifies Turnstile token before creating session', async
         'cf-turnstile-response': 'turnstile-token',
       }),
       env: {
-        NAV_AUTH: kv,
+        NAV_AUTH1: kv,
         TURNSTILE_SITE_KEY: 'site-key',
         TURNSTILE_SECRET_KEY: 'secret-key',
       },

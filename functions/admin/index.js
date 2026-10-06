@@ -26,7 +26,7 @@ export async function onRequestGet(context) {
 
     if (response.ok) {
       // 从 KV 读取 CSRF token 并注入到 HTML
-      const csrfToken = await env.NAV_AUTH.get(`csrf_${sessionToken}`);
+      const csrfToken = await env.NAV_AUTH1.get(`csrf_${sessionToken}`);
       if (csrfToken) {
         let html = await response.text();
         html = html.replace('</head>', `<meta name="csrf-token" content="${csrfToken}">\n</head>`);

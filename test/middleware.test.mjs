@@ -57,7 +57,7 @@ test('session cookie helpers create and read admin_session cookies', () => {
 });
 
 test('isAdminAuthenticated checks the session token in KV', async () => {
-  const env = { NAV_AUTH: createKv({ session_token: '1' }) };
+  const env = { NAV_AUTH1: createKv({ session_token: '1' }) };
   const okRequest = new Request('https://example.com/admin', {
     headers: { Cookie: 'admin_session=token' },
   });
@@ -70,7 +70,7 @@ test('isAdminAuthenticated checks the session token in KV', async () => {
 });
 
 test('validateCsrfToken requires matching X-CSRF-Token when stored token exists', async () => {
-  const env = { NAV_AUTH: createKv({ csrf_session: 'csrf-value' }) };
+  const env = { NAV_AUTH1: createKv({ csrf_session: 'csrf-value' }) };
   const validRequest = new Request('https://example.com/api/config', {
     method: 'POST',
     headers: {
@@ -91,7 +91,7 @@ test('validateCsrfToken requires matching X-CSRF-Token when stored token exists'
 });
 
 test('validateCsrfToken rejects sessions without a stored CSRF token', async () => {
-  const env = { NAV_AUTH: createKv({ session_session: '1' }) };
+  const env = { NAV_AUTH1: createKv({ session_session: '1' }) };
   const request = new Request('https://example.com/api/config', {
     method: 'POST',
     headers: {
@@ -117,7 +117,7 @@ test('validateOrigin only accepts same-host Origin or Referer headers', () => {
 });
 
 test('checkRateLimit increments counts and blocks after the limit', async () => {
-  const env = { NAV_AUTH: createKv() };
+  const env = { NAV_AUTH1: createKv() };
 
   assert.deepEqual(await checkRateLimit(env, 'rate_key', 2, 60), { allowed: true, remaining: 1 });
   assert.deepEqual(await checkRateLimit(env, 'rate_key', 2, 60), { allowed: true, remaining: 0 });
@@ -131,7 +131,7 @@ test('clearHomeCache deletes only versioned home cache keys', async () => {
     [`home_html_public_${HOME_CACHE_VERSION}`]: 'public',
     [`home_html_private_${HOME_CACHE_VERSION}`]: 'private',
   });
-  const env = { NAV_AUTH: kv };
+  const env = { NAV_AUTH1: kv };
 
   await clearHomeCache(env, 'all');
 

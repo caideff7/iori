@@ -56,8 +56,8 @@ test('POST /api/ai-chat uses the saved Workers AI model first', async () => {
       messages: [{ role: 'user', content: '生成描述' }],
     }),
     env: {
-      NAV_AUTH: createKv({ session_token: '1' }),
-      NAV_DB: createDb({
+      NAV_AUTH1: createKv({ session_token: '1' }),
+      NAV_DB1: createDb({
         provider: 'workers-ai',
         model: savedModel,
       }),
@@ -85,8 +85,8 @@ test('POST /api/ai-chat falls back to the default Workers AI model', async () =>
       messages: [{ role: 'user', content: '生成描述' }],
     }),
     env: {
-      NAV_AUTH: createKv({ session_token: '1' }),
-      NAV_DB: createDb({ provider: 'workers-ai' }),
+      NAV_AUTH1: createKv({ session_token: '1' }),
+      NAV_DB1: createDb({ provider: 'workers-ai' }),
       AI: {
         async run(model, payload) {
           runCalls.push({ model, payload });
@@ -110,8 +110,8 @@ test('POST /api/ai-chat extracts content from Workers AI chat completion respons
       messages: [{ role: 'user', content: '生成描述' }],
     }),
     env: {
-      NAV_AUTH: createKv({ session_token: '1' }),
-      NAV_DB: createDb({
+      NAV_AUTH1: createKv({ session_token: '1' }),
+      NAV_DB1: createDb({
         provider: 'workers-ai',
         model: savedModel,
       }),
@@ -145,8 +145,8 @@ test('POST /api/ai-chat extracts a short bookmark description from verbose reaso
       messages: [{ role: 'user', content: '生成描述' }],
     }),
     env: {
-      NAV_AUTH: createKv({ session_token: '1' }),
-      NAV_DB: createDb({
+      NAV_AUTH1: createKv({ session_token: '1' }),
+      NAV_DB1: createDb({
         provider: 'workers-ai',
         model: '@cf/qwen/qwq-32b',
       }),
@@ -181,8 +181,8 @@ test('POST /api/ai-chat does not return verbose reasoning when no description ca
       messages: [{ role: 'user', content: '生成描述' }],
     }),
     env: {
-      NAV_AUTH: createKv({ session_token: '1' }),
-      NAV_DB: createDb({
+      NAV_AUTH1: createKv({ session_token: '1' }),
+      NAV_DB1: createDb({
         provider: 'workers-ai',
         model: '@cf/qwen/qwq-32b',
       }),
@@ -209,8 +209,8 @@ test('POST /api/ai-chat extracts bookmark JSON from verbose model output', async
       messages: [{ role: 'user', content: '生成名称和描述' }],
     }),
     env: {
-      NAV_AUTH: createKv({ session_token: '1' }),
-      NAV_DB: createDb({
+      NAV_AUTH1: createKv({ session_token: '1' }),
+      NAV_DB1: createDb({
         provider: 'workers-ai',
         model: '@cf/qwen/qwq-32b',
       }),

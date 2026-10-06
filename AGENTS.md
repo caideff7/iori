@@ -45,10 +45,10 @@ npm run build:css
 npm run dev
 
 # 本地执行 SQL
-npx wrangler d1 execute book --local --file=schema.sql
+npx wrangler d1 execute book1 --local --file=schema.sql
 
 # 远程执行 SQL
-npx wrangler d1 execute book --remote --file=schema.sql
+npx wrangler d1 execute book1 --remote --file=schema.sql
 ```
 
 **注意**: 本项目使用少量 npm 开发依赖（如 TailwindCSS、Husky），测试使用 Node.js 内置 `node:test`，暂无 lint 工具。
@@ -133,19 +133,19 @@ function sanitizeUrl(url) {
 
 ```javascript
 // 使用参数绑定（防 SQL 注入）
-const { results } = await env.NAV_DB
+const { results } = await env.NAV_DB1
   .prepare('SELECT * FROM sites WHERE catelog_id = ?')
   .bind(categoryId).all();
 
 // 查询单条
-const site = await env.NAV_DB.prepare('SELECT * FROM sites WHERE id = ?').bind(id).first();
+const site = await env.NAV_DB1.prepare('SELECT * FROM sites WHERE id = ?').bind(id).first();
 
 // 执行更新
-await env.NAV_DB.prepare('DELETE FROM sites WHERE id = ?').bind(id).run();
+await env.NAV_DB1.prepare('DELETE FROM sites WHERE id = ?').bind(id).run();
 
 // 批量执行
-await env.NAV_DB.batch([
-  env.NAV_DB.prepare('CREATE INDEX IF NOT EXISTS idx_sites_catelog_id ON sites(catelog_id)')
+await env.NAV_DB1.batch([
+  env.NAV_DB1.prepare('CREATE INDEX IF NOT EXISTS idx_sites_catelog_id ON sites(catelog_id)')
 ]);
 ```
 
@@ -169,8 +169,8 @@ function showToast(message) {
 
 | 变量名 | 说明 | 默认值 |
 |--------|------|--------|
-| `NAV_DB` | D1 数据库绑定 | 必需 |
-| `NAV_AUTH` | KV 存储绑定 | 必需 |
+| `NAV_DB1` | D1 数据库绑定 | 必需 |
+| `NAV_AUTH1` | KV 存储绑定 | 必需 |
 | `ENABLE_PUBLIC_SUBMISSION` | 允许访客提交 | `false` |
 | `SITE_NAME` | 网站名称 | `灰色轨迹` |
 | `SITE_DESCRIPTION` | 首页副标题 | `一个优雅、快速、易于部署的书签（网址）收藏与分享平台，完全基于 Cloudflare 全家桶构建` |
@@ -220,6 +220,6 @@ const SCHEMA_VERSION = 'v5';
 
 // 2. 在 ensureSchemaReady() 中添加新字段检查
 if (!sitesCols.has('new_column')) {
-  alterStatements.push(env.NAV_DB.prepare("ALTER TABLE sites ADD COLUMN new_column TEXT"));
+  alterStatements.push(env.NAV_DB1.prepare("ALTER TABLE sites ADD COLUMN new_column TEXT"));
 }
 ```

@@ -32,7 +32,7 @@ export async function onRequestPost(context) {
       }
 
       statements.push(
-        env.NAV_DB.prepare(
+        env.NAV_DB1.prepare(
           'UPDATE category SET sort_order = ?, update_time = CURRENT_TIMESTAMP WHERE id = ?'
         ).bind(sortOrder, id)
       );
@@ -40,7 +40,7 @@ export async function onRequestPost(context) {
 
     dbMayHaveChanged = true;
     for (let i = 0; i < statements.length; i += REORDER_CHUNK_SIZE) {
-      await env.NAV_DB.batch(statements.slice(i, i + REORDER_CHUNK_SIZE));
+      await env.NAV_DB1.batch(statements.slice(i, i + REORDER_CHUNK_SIZE));
     }
 
     return jsonResponse({

@@ -79,7 +79,7 @@ export async function onRequest(context) {
     try {
       [cacheDirtyValue, cachedHtml] = await Promise.all([
         getHomeCacheDirtyValue(env, cacheScope),
-        env.NAV_AUTH.get(homeCacheKey),
+        env.NAV_AUTH1.get(homeCacheKey),
         ensureSchemaReady(env),
       ]);
     } catch (e) {
@@ -121,24 +121,24 @@ export async function onRequest(context) {
   const settingsCacheKey = 'settings_cache';
   const fetchSettings = async () => {
     try {
-      const cached = await env.NAV_AUTH.get(settingsCacheKey, { type: 'json' });
+      const cached = await env.NAV_AUTH1.get(settingsCacheKey, { type: 'json' });
       if (cached) return { results: cached, fromCache: true };
     } catch (e) {
       console.warn('Settings cache read failed:', e);
     }
-    const result = await env.NAV_DB.prepare(`SELECT key, value FROM settings WHERE key IN (${settingsPlaceholders})`).bind(...settingsKeys).all();
+    const result = await env.NAV_DB1.prepare(`SELECT key, value FROM settings WHERE key IN (${settingsPlaceholders})`).bind(...settingsKeys).all();
     // 异步写入缓存，24h TTL；POST settings 时会主动清除（见 api/settings.js），
     // 较长 TTL 减少 D1 兜底查询次数
-    if (result.results && env.NAV_AUTH) {
-      context.waitUntil(env.NAV_AUTH.put(settingsCacheKey, JSON.stringify(result.results), { expirationTtl: 86400 }));
+    if (result.results && env.NAV_AUTH1) {
+      context.waitUntil(env.NAV_AUTH1.put(settingsCacheKey, JSON.stringify(result.results), { expirationTtl: 86400 }));
     }
     return result;
   };
 
   const [categoriesResult, settingsResult, sitesResult, templateHtml] = await Promise.all([
-    env.NAV_DB.prepare(categoryQuery).all().catch(e => ({ results: [], error: e })),
+    env.NAV_DB1.prepare(categoryQuery).all().catch(e => ({ results: [], error: e })),
     fetchSettings().catch(e => ({ results: [], error: e })),
-    env.NAV_DB.prepare(sitesQuery).bind(includePrivate).all().catch(e => ({ results: [], error: e })),
+    env.NAV_DB1.prepare(sitesQuery).bind(includePrivate).all().catch(e => ({ results: [], error: e })),
     getTemplateHtml(env, request.url)
   ]);
 
@@ -607,7 +607,7 @@ export async function onRequest(context) {
   if (isHomePage) {
     context.waitUntil((async () => {
       try {
-        await env.NAV_AUTH.put(homeCacheKey, html, { expirationTtl: HOME_CACHE_TTL });
+        await env.NAV_AUTH1.put(homeCacheKey, html, { expirationTtl: HOME_CACHE_TTL });
         if (cacheDirty) {
           await clearHomeCacheDirty(env, cacheScope, cacheDirtyValue);
         }

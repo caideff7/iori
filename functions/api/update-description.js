@@ -28,7 +28,7 @@ export async function onRequestPost(context) {
     const logoResult = normalizeBookmarkLogo(logo, { nullIfEmpty: true });
     if (!logoResult.ok) return errorResponse(logoResult.message, 400);
 
-    const site = await env.NAV_DB.prepare(
+    const site = await env.NAV_DB1.prepare(
       'SELECT id, is_private FROM sites WHERE id = ?'
     ).bind(id).first();
 
@@ -40,7 +40,7 @@ export async function onRequestPost(context) {
     const sanitizedLogo = buildFaviconUrl(urlResult.value, logoResult.value, iconAPI);
 
     // 3. 更新数据库
-    const result = await env.NAV_DB.prepare(
+    const result = await env.NAV_DB1.prepare(
       'UPDATE sites SET desc = ?, logo = ?, update_time = CURRENT_TIMESTAMP WHERE id = ?'
     ).bind(descResult.value, sanitizedLogo, id).run();
 

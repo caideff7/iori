@@ -128,7 +128,7 @@ export function validateBookmarkExportForImport(data) {
 
 /**
  * 查询可导出的分类与书签
- * @param {object} env - Cloudflare env（需要 NAV_DB 绑定）
+ * @param {object} env - Cloudflare env（需要 NAV_DB1 绑定）
  * @param {object} options - { includePrivate: boolean }
  * @returns {Promise<{category: Array, sites: Array}>}
  */
@@ -148,8 +148,8 @@ export async function fetchBookmarkExport(env, options = {}) {
     sitesQuery += ' ORDER BY sort_order ASC, create_time DESC';
 
     const [{ results: categories }, { results: sites }] = await Promise.all([
-        env.NAV_DB.prepare(categoryQuery).all(),
-        env.NAV_DB.prepare(sitesQuery).all(),
+        env.NAV_DB1.prepare(categoryQuery).all(),
+        env.NAV_DB1.prepare(sitesQuery).all(),
     ]);
 
     return {

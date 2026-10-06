@@ -64,8 +64,8 @@ test('PUT /api/pending/:id matches legacy root URL forms before approval', async
     },
   });
   const env = {
-    NAV_AUTH: createKv({ session_token: '1' }),
-    NAV_DB: db,
+    NAV_AUTH1: createKv({ session_token: '1' }),
+    NAV_DB1: db,
   };
 
   const response = await onRequestPut({ request, env, params: { id: '1' } });
@@ -140,7 +140,7 @@ function buildApprovalRequest() {
 
 test('PUT /api/pending/:id approves the insert and dequeue in a single batch', async () => {
   const { db, calls } = createApprovalDb();
-  const env = { NAV_AUTH: createKv({ session_token: '1' }), NAV_DB: db };
+  const env = { NAV_AUTH1: createKv({ session_token: '1' }), NAV_DB1: db };
 
   const response = await onRequestPut({ request: buildApprovalRequest(), env, params: { id: '1' } });
   assert.equal(response.status, 200, (await response.json()).message);
@@ -151,13 +151,13 @@ test('PUT /api/pending/:id approves the insert and dequeue in a single batch', a
   assert.equal(batches[0].sqls.length, 2);
   assert.match(batches[0].sqls[0], /INSERT INTO sites/);
   assert.match(batches[0].sqls[1], /DELETE FROM pending_sites/);
-  assert.equal(env.NAV_AUTH.store.has(getHomeDirtyKey('public')), true, '批准成功应打脏标记');
+  assert.equal(env.NAV_AUTH1.store.has(getHomeDirtyKey('public')), true, '批准成功应打脏标记');
 });
 
 test('PUT /api/pending/:id leaves no partial write when the batch fails', async () => {
   // batch 原子回滚，因此失败时既没有新书签也没有丢失待审记录，无需补打脏标记
   const { db, calls } = createApprovalDb({ failBatch: true });
-  const env = { NAV_AUTH: createKv({ session_token: '1' }), NAV_DB: db };
+  const env = { NAV_AUTH1: createKv({ session_token: '1' }), NAV_DB1: db };
 
   const response = await onRequestPut({ request: buildApprovalRequest(), env, params: { id: '1' } });
   const body = await response.json();
@@ -165,5 +165,5 @@ test('PUT /api/pending/:id leaves no partial write when the batch fails', async 
   assert.equal(response.status, 500);
   assert.match(body.message, /D1 batch failed/);
   assert.equal(calls.filter(call => call.kind === 'batch').length, 1);
-  assert.equal(env.NAV_AUTH.store.has(getHomeDirtyKey('public')), false, '全部回滚时不该打脏标记');
+  assert.equal(env.NAV_AUTH1.store.has(getHomeDirtyKey('public')), false, '全部回滚时不该打脏标记');
 });

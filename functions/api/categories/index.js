@@ -24,7 +24,7 @@ export async function onRequestGet(context) {
       ? 'LEFT JOIN sites s ON c.id = s.catelog_id AND s.is_private = 0'
       : 'LEFT JOIN sites s ON c.id = s.catelog_id';
 
-    const { results } = await env.NAV_DB.prepare(`
+    const { results } = await env.NAV_DB1.prepare(`
         SELECT c.id, c.catelog, c.sort_order, c.parent_id, c.is_private, COUNT(s.id) AS site_count
         FROM category c
         ${siteJoin}
@@ -33,7 +33,7 @@ export async function onRequestGet(context) {
         ORDER BY c.sort_order ASC, c.create_time DESC
         LIMIT ? OFFSET ?
       `).bind(pageSize, offset).all();
-    const countResult = await env.NAV_DB.prepare(`
+    const countResult = await env.NAV_DB1.prepare(`
       SELECT COUNT(*) as total FROM category ${countFilter}
     `).first();
 

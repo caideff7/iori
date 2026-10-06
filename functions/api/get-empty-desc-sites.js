@@ -11,7 +11,7 @@ export async function onRequestGet(context) {
 
   try {
     // 2. 查询数据库中描述为空或NULL的记录
-    const { results } = await env.NAV_DB.prepare(
+    const { results } = await env.NAV_DB1.prepare(
       "SELECT id, name, url , logo FROM sites WHERE desc IS NULL OR desc = ''"
     ).all();
 

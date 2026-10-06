@@ -50,9 +50,9 @@ export async function onRequestGet(context) {
     
     // 添加分页参数
     const fullBindParams = [...queryBindParams, pageSize, offset];
-    const { results } = await env.NAV_DB.prepare(query).bind(...fullBindParams).all();
+    const { results } = await env.NAV_DB1.prepare(query).bind(...fullBindParams).all();
     
-    const countResult = await env.NAV_DB.prepare(countQuery).bind(...queryBindParams).first();
+    const countResult = await env.NAV_DB1.prepare(countQuery).bind(...queryBindParams).first();
     const total = countResult ? countResult.total : 0;
 
     return jsonResponse({
@@ -110,14 +110,14 @@ export async function onRequestPost(context) {
     // Check if URL already exists
     const urlCandidates = getUrlMatchCandidates(rawUrl);
     const placeholders = urlCandidates.map(() => '?').join(',');
-    const existingSite = await env.NAV_DB.prepare(`SELECT id FROM sites WHERE url IN (${placeholders})`).bind(...urlCandidates).first();
+    const existingSite = await env.NAV_DB1.prepare(`SELECT id FROM sites WHERE url IN (${placeholders})`).bind(...urlCandidates).first();
     if (existingSite) {
         return errorResponse('该 URL 已存在，请勿重复添加', 409);
     }
 
     sanitizedLogo = buildFaviconUrl(sanitizedUrl, sanitizedLogo, iconAPI);
     // Find the category ID from the category name
-    const categoryResult = await env.NAV_DB.prepare('SELECT catelog, is_private FROM category WHERE id = ?').bind(catelogId).first();
+    const categoryResult = await env.NAV_DB1.prepare('SELECT catelog, is_private FROM category WHERE id = ?').bind(catelogId).first();
 
     if (!categoryResult) {
       return errorResponse(`Category not found.`, 400);
@@ -129,7 +129,7 @@ export async function onRequestPost(context) {
         finalIsPrivate = 1;
     }
 
-    const insert = await env.NAV_DB.prepare(`
+    const insert = await env.NAV_DB1.prepare(`
       INSERT INTO sites (name, url, logo, desc, catelog_id, catelog_name, sort_order, is_private)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     `).bind(sanitizedName, sanitizedUrl, sanitizedLogo, sanitizedDesc, catelogId, categoryResult.catelog, sortOrderValue, finalIsPrivate).run();

@@ -150,8 +150,8 @@ test('PUT /api/categories/:id marks private descendants and their sites private'
   const response = await onRequestPut({
     request,
     env: {
-      NAV_AUTH: createKv({ session_token: '1' }),
-      NAV_DB: db,
+      NAV_AUTH1: createKv({ session_token: '1' }),
+      NAV_DB1: db,
     },
     params: { id: '1' },
   });

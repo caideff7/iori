@@ -52,13 +52,13 @@ export async function onRequestPost(context) {
       return errorResponse('URL must be a valid http or https URL', 400);
     }
 
-    const categoryResult = await env.NAV_DB.prepare('SELECT catelog, is_private FROM category WHERE id = ?').bind(catelog_id).first();
+    const categoryResult = await env.NAV_DB1.prepare('SELECT catelog, is_private FROM category WHERE id = ?').bind(catelog_id).first();
     if (!categoryResult || categoryResult.is_private === 1) {
       return errorResponse('Category not found', 400);
     }
     const catelogName = categoryResult.catelog;
 
-    await env.NAV_DB.prepare(`
+    await env.NAV_DB1.prepare(`
       INSERT INTO pending_sites (name, url, logo, desc, catelog_id, catelog_name)
       VALUES (?, ?, ?, ?, ?, ?)
     `).bind(sanitizedName, sanitizedUrl, sanitizedLogo, sanitizedDesc, catelog_id, catelogName).run();

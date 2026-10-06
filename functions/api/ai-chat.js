@@ -195,7 +195,7 @@ export async function onRequestPost(context) {
 
         // 2. 从数据库读取 AI 设置
         const keys = ['provider', 'apiKey', 'baseUrl', 'model'];
-        const { results } = await env.NAV_DB.prepare(
+        const { results } = await env.NAV_DB1.prepare(
             `SELECT key, value FROM settings WHERE key IN (${keys.map(() => '?').join(',')})`
         ).bind(...keys).all();
 

@@ -13,13 +13,13 @@ function buildPrivateDescendantStatements(env, categoryId) {
   `;
 
   return [
-    env.NAV_DB.prepare(`
+    env.NAV_DB1.prepare(`
       ${descendantsCte}
       UPDATE category
       SET is_private = 1
       WHERE id IN (SELECT id FROM descendants)
     `).bind(categoryId),
-    env.NAV_DB.prepare(`
+    env.NAV_DB1.prepare(`
       ${descendantsCte}
       UPDATE sites
       SET is_private = 1
@@ -45,7 +45,7 @@ export async function onRequestPut(context) {
 
     if (body && body.reset) {
       // 1. Check for sub-categories
-      const hasChildren = await env.NAV_DB.prepare('SELECT id FROM category WHERE parent_id = ? LIMIT 1')
+      const hasChildren = await env.NAV_DB1.prepare('SELECT id FROM category WHERE parent_id = ? LIMIT 1')
         .bind(categoryId)
         .first();
         
@@ -54,7 +54,7 @@ export async function onRequestPut(context) {
       }
 
       // 2. Check for associated sites (bookmarks)
-      const hasSites = await env.NAV_DB.prepare('SELECT id FROM sites WHERE catelog_id = ? LIMIT 1')
+      const hasSites = await env.NAV_DB1.prepare('SELECT id FROM sites WHERE catelog_id = ? LIMIT 1')
         .bind(categoryId)
         .first();
         
@@ -62,7 +62,7 @@ export async function onRequestPut(context) {
         return errorResponse('无法删除：该分类包含书签，请先删除或移动书签', 400);
       }
 
-      await env.NAV_DB.prepare('DELETE FROM category WHERE id = ?')
+      await env.NAV_DB1.prepare('DELETE FROM category WHERE id = ?')
         .bind(categoryId)
         .run();
 
@@ -92,7 +92,7 @@ export async function onRequestPut(context) {
     // 检查 parent_id 存在性及循环引用
     let parentCategory = null;
     if (parentId !== 0) {
-      parentCategory = await env.NAV_DB.prepare('SELECT id, is_private FROM category WHERE id = ?').bind(parentId).first();
+      parentCategory = await env.NAV_DB1.prepare('SELECT id, is_private FROM category WHERE id = ?').bind(parentId).first();
       if (!parentCategory) {
         return errorResponse('父分类不存在', 400);
       }
@@ -105,14 +105,14 @@ export async function onRequestPut(context) {
           return errorResponse('不允许创建循环引用的分类层级', 400);
         }
         visited.add(currentParent);
-        const row = await env.NAV_DB.prepare('SELECT parent_id FROM category WHERE id = ?').bind(currentParent).first();
+        const row = await env.NAV_DB1.prepare('SELECT parent_id FROM category WHERE id = ?').bind(currentParent).first();
         if (!row) break;
         currentParent = row.parent_id || 0;
       }
     }
 
     // 检查在同一个父分类下，分类名称是否已存在（排除自身）
-    const existingCategory = await env.NAV_DB.prepare('SELECT id FROM category WHERE catelog = ? AND parent_id = ? AND id != ?')
+    const existingCategory = await env.NAV_DB1.prepare('SELECT id FROM category WHERE catelog = ? AND parent_id = ? AND id != ?')
       .bind(catelog, parentId, categoryId)
       .first();
 
@@ -124,9 +124,9 @@ export async function onRequestPut(context) {
     const isPrivate = parentCategory?.is_private === 1 ? 1 : (body.is_private ? 1 : 0);
 
     const batchStmts = [
-      env.NAV_DB.prepare('UPDATE category SET catelog = ?, sort_order = ?, parent_id = ?, is_private = ? WHERE id = ?')
+      env.NAV_DB1.prepare('UPDATE category SET catelog = ?, sort_order = ?, parent_id = ?, is_private = ? WHERE id = ?')
         .bind(catelog, sort_order, parentId, isPrivate, categoryId),
-      env.NAV_DB.prepare('UPDATE sites SET catelog_name = ? WHERE catelog_id = ?')
+      env.NAV_DB1.prepare('UPDATE sites SET catelog_name = ? WHERE catelog_id = ?')
         .bind(catelog, categoryId),
     ];
 
@@ -135,7 +135,7 @@ export async function onRequestPut(context) {
       batchStmts.push(...buildPrivateDescendantStatements(env, categoryId));
     }
 
-    await env.NAV_DB.batch(batchStmts);
+    await env.NAV_DB1.batch(batchStmts);
 
     await markHomeCacheDirty(env, 'all');
 

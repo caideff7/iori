@@ -15,18 +15,18 @@ async function runBaseSchema(db) {
 }
 
 async function runIncrementalMigrations(env) {
-  await env.NAV_DB.batch([
-    env.NAV_DB.prepare('CREATE INDEX IF NOT EXISTS idx_sites_catelog_id ON sites(catelog_id)'),
-    env.NAV_DB.prepare('CREATE INDEX IF NOT EXISTS idx_sites_sort_order ON sites(sort_order)'),
-    env.NAV_DB.prepare('CREATE INDEX IF NOT EXISTS idx_sites_private_sort ON sites(is_private, sort_order)'),
-    env.NAV_DB.prepare('CREATE INDEX IF NOT EXISTS idx_sites_catelog_name ON sites(catelog_name)'),
-    env.NAV_DB.prepare('CREATE INDEX IF NOT EXISTS idx_sites_url ON sites(url)')
+  await env.NAV_DB1.batch([
+    env.NAV_DB1.prepare('CREATE INDEX IF NOT EXISTS idx_sites_catelog_id ON sites(catelog_id)'),
+    env.NAV_DB1.prepare('CREATE INDEX IF NOT EXISTS idx_sites_sort_order ON sites(sort_order)'),
+    env.NAV_DB1.prepare('CREATE INDEX IF NOT EXISTS idx_sites_private_sort ON sites(is_private, sort_order)'),
+    env.NAV_DB1.prepare('CREATE INDEX IF NOT EXISTS idx_sites_catelog_name ON sites(catelog_name)'),
+    env.NAV_DB1.prepare('CREATE INDEX IF NOT EXISTS idx_sites_url ON sites(url)')
   ]);
 
   const [sitesColumns, categoryColumns, pendingColumns] = await Promise.all([
-    env.NAV_DB.prepare('PRAGMA table_info(sites)').all(),
-    env.NAV_DB.prepare('PRAGMA table_info(category)').all(),
-    env.NAV_DB.prepare('PRAGMA table_info(pending_sites)').all(),
+    env.NAV_DB1.prepare('PRAGMA table_info(sites)').all(),
+    env.NAV_DB1.prepare('PRAGMA table_info(category)').all(),
+    env.NAV_DB1.prepare('PRAGMA table_info(pending_sites)').all(),
   ]);
   const sitesCols = new Set((sitesColumns.results || []).map(column => column.name));
   const categoryCols = new Set((categoryColumns.results || []).map(column => column.name));
@@ -37,19 +37,19 @@ async function runIncrementalMigrations(env) {
   const pendingMissingCatalogName = !pendingCols.has('catelog_name');
 
   if (!sitesCols.has('is_private')) {
-    alterStatements.push(env.NAV_DB.prepare('ALTER TABLE sites ADD COLUMN is_private INTEGER DEFAULT 0'));
+    alterStatements.push(env.NAV_DB1.prepare('ALTER TABLE sites ADD COLUMN is_private INTEGER DEFAULT 0'));
   }
   if (sitesMissingCatalogName) {
-    alterStatements.push(env.NAV_DB.prepare('ALTER TABLE sites ADD COLUMN catelog_name TEXT'));
+    alterStatements.push(env.NAV_DB1.prepare('ALTER TABLE sites ADD COLUMN catelog_name TEXT'));
   }
   if (pendingMissingCatalogName) {
-    alterStatements.push(env.NAV_DB.prepare('ALTER TABLE pending_sites ADD COLUMN catelog_name TEXT'));
+    alterStatements.push(env.NAV_DB1.prepare('ALTER TABLE pending_sites ADD COLUMN catelog_name TEXT'));
   }
   if (!categoryCols.has('is_private')) {
-    alterStatements.push(env.NAV_DB.prepare('ALTER TABLE category ADD COLUMN is_private INTEGER DEFAULT 0'));
+    alterStatements.push(env.NAV_DB1.prepare('ALTER TABLE category ADD COLUMN is_private INTEGER DEFAULT 0'));
   }
   if (!categoryCols.has('parent_id')) {
-    alterStatements.push(env.NAV_DB.prepare('ALTER TABLE category ADD COLUMN parent_id INTEGER DEFAULT 0'));
+    alterStatements.push(env.NAV_DB1.prepare('ALTER TABLE category ADD COLUMN parent_id INTEGER DEFAULT 0'));
   }
 
   for (const statement of alterStatements) {
@@ -61,7 +61,7 @@ async function runIncrementalMigrations(env) {
   }
 
   if (sitesMissingCatalogName) {
-    await env.NAV_DB.prepare(`
+    await env.NAV_DB1.prepare(`
       UPDATE sites
       SET catelog_name = (
         SELECT catelog FROM category WHERE category.id = sites.catelog_id
@@ -71,7 +71,7 @@ async function runIncrementalMigrations(env) {
   }
 
   if (pendingMissingCatalogName) {
-    await env.NAV_DB.prepare(`
+    await env.NAV_DB1.prepare(`
       UPDATE pending_sites
       SET catelog_name = (
         SELECT catelog FROM category WHERE category.id = pending_sites.catelog_id
@@ -82,7 +82,7 @@ async function runIncrementalMigrations(env) {
 }
 
 export async function ensureSchemaReady(env) {
-  if (!env || !env.NAV_DB) return;
+  if (!env || !env.NAV_DB1) return;
   if (schemaReady) return;
   if (schemaReadyPromise) {
     await schemaReadyPromise;
@@ -90,7 +90,7 @@ export async function ensureSchemaReady(env) {
   }
 
   schemaReadyPromise = (async () => {
-    const kv = env.NAV_AUTH;
+    const kv = env.NAV_AUTH1;
 
     if (kv) {
       try {
@@ -105,7 +105,7 @@ export async function ensureSchemaReady(env) {
     }
 
     try {
-      await runBaseSchema(env.NAV_DB);
+      await runBaseSchema(env.NAV_DB1);
       await runIncrementalMigrations(env);
 
       if (kv) {

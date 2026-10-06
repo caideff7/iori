@@ -25,7 +25,7 @@ test('GET /api/public-config exposes Turnstile site key but not secret key', asy
       ENABLE_PUBLIC_SUBMISSION: 'true',
       TURNSTILE_SITE_KEY: 'site-key',
       TURNSTILE_SECRET_KEY: 'secret-key',
-      NAV_DB: createEmptyDb(),
+      NAV_DB1: createEmptyDb(),
     },
   });
   const body = await response.json();

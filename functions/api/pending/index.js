@@ -13,7 +13,7 @@ export async function onRequestGet(context) {
   const { page, pageSize, offset } = parsePagination(url.searchParams, { maxPageSize: 200 });
 
   try {
-    const { results } = await env.NAV_DB.prepare(`
+    const { results } = await env.NAV_DB1.prepare(`
       SELECT p.*, c.catelog
       FROM pending_sites p
       LEFT JOIN category c ON p.catelog_id = c.id
@@ -21,7 +21,7 @@ export async function onRequestGet(context) {
       LIMIT ? OFFSET ?
     `).bind(pageSize, offset).all();
     
-    const countResult = await env.NAV_DB.prepare(`
+    const countResult = await env.NAV_DB1.prepare(`
       SELECT COUNT(*) as total FROM pending_sites
     `).first();
     

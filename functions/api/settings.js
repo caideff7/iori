@@ -119,7 +119,7 @@ export async function onRequestGet(context) {
 
   try {
     // Try to get all settings
-    const { results } = await env.NAV_DB.prepare('SELECT key, value FROM settings').all();
+    const { results } = await env.NAV_DB1.prepare('SELECT key, value FROM settings').all();
 
     const settings = {};
     if (results) {
@@ -223,7 +223,7 @@ export async function onRequestPost(context) {
     if (normalizedEntries.length > 0) {
       const keys = normalizedEntries.map(([key]) => key);
       const placeholders = keys.map(() => '?').join(',');
-      const { results = [] } = await env.NAV_DB
+      const { results = [] } = await env.NAV_DB1
         .prepare(`SELECT key, value FROM settings WHERE key IN (${placeholders})`)
         .bind(...keys)
         .all();
@@ -233,8 +233,8 @@ export async function onRequestPost(context) {
     }
 
     if (changedEntries.length > 0) {
-      const stmt = env.NAV_DB.prepare('INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)');
-      await env.NAV_DB.batch(changedEntries.map(([key, value]) => stmt.bind(key, value)));
+      const stmt = env.NAV_DB1.prepare('INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)');
+      await env.NAV_DB1.batch(changedEntries.map(([key, value]) => stmt.bind(key, value)));
     }
 
     // 保存成功后刷新设置缓存和首页缓存，避免旧缓存状态阻止设置生效。
@@ -248,7 +248,7 @@ export async function onRequestPost(context) {
     if (touchesRenderedSettings) {
       try {
         await Promise.all([
-          env.NAV_AUTH.delete('settings_cache'),
+          env.NAV_AUTH1.delete('settings_cache'),
           markHomeCacheDirty(env, 'all'),
         ]);
       } catch (e) {

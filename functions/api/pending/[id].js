@@ -12,7 +12,7 @@ export async function onRequestPut(context) {
   }
 
   try {
-    const { results } = await env.NAV_DB.prepare('SELECT * FROM pending_sites WHERE id = ?').bind(id).all();
+    const { results } = await env.NAV_DB1.prepare('SELECT * FROM pending_sites WHERE id = ?').bind(id).all();
     
     if (results.length === 0) {
       return errorResponse('Pending config not found', 404);
@@ -67,7 +67,7 @@ export async function onRequestPut(context) {
 
     const urlCandidates = getUrlMatchCandidates(rawUrl);
     const placeholders = urlCandidates.map(() => '?').join(',');
-    const duplicate = await env.NAV_DB.prepare(`SELECT id FROM sites WHERE url IN (${placeholders})`)
+    const duplicate = await env.NAV_DB1.prepare(`SELECT id FROM sites WHERE url IN (${placeholders})`)
       .bind(...urlCandidates)
       .first();
     if (duplicate) {
@@ -76,7 +76,7 @@ export async function onRequestPut(context) {
 
     const iconAPI = env.ICON_API || 'https://faviconsnap.com/api/favicon?url=';
     sanitizedLogo = buildFaviconUrl(sanitizedUrl, sanitizedLogo, iconAPI);
-    const category = await env.NAV_DB.prepare('SELECT catelog, is_private FROM category WHERE id = ?').bind(catelogId).first();
+    const category = await env.NAV_DB1.prepare('SELECT catelog, is_private FROM category WHERE id = ?').bind(catelogId).first();
     if (!category) {
       return errorResponse('Category not found.', 400);
     }
@@ -85,12 +85,12 @@ export async function onRequestPut(context) {
     // 入库与移出待审队列必须同时生效：D1 的 batch 是隐式单事务，失败即全部回滚。
     // 若拆成两次 run()，DELETE 失败会让书签已入库但条目永久卡在待审队列，
     // 且部分变更没有打脏标记，首页缓存会滞留到 TTL 耗尽。
-    await env.NAV_DB.batch([
-      env.NAV_DB.prepare(`
+    await env.NAV_DB1.batch([
+      env.NAV_DB1.prepare(`
         INSERT INTO sites (name, url, logo, desc, catelog_id, catelog_name, sort_order, is_private)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?)
       `).bind(sanitizedName, sanitizedUrl, sanitizedLogo, sanitizedDesc, catelogId, category.catelog, sortOrderValue, finalIsPrivate),
-      env.NAV_DB.prepare('DELETE FROM pending_sites WHERE id = ?').bind(id),
+      env.NAV_DB1.prepare('DELETE FROM pending_sites WHERE id = ?').bind(id),
     ]);
 
     await markHomeCacheDirty(env, finalIsPrivate ? 'private' : 'all');
@@ -114,7 +114,7 @@ export async function onRequestDelete(context) {
   }
 
   try {
-    await env.NAV_DB.prepare('DELETE FROM pending_sites WHERE id = ?').bind(id).run();
+    await env.NAV_DB1.prepare('DELETE FROM pending_sites WHERE id = ?').bind(id).run();
     
     return jsonResponse({
       code: 200,

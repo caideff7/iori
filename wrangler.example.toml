@@ -17,12 +17,12 @@ pages_build_output_dir = "public"
 command = "npm run build:css"
 
 [[d1_databases]]
-binding = "NAV_DB"
-database_name = "book"
+binding = "NAV_DB1"
+database_name = "book1"
 database_id = "PASTE_YOUR_D1_DATABASE_ID_HERE"
 
 [[kv_namespaces]]
-binding = "NAV_AUTH"
+binding = "NAV_AUTH1"
 id = "PASTE_YOUR_KV_NAMESPACE_ID_HERE"
 
 [vars]

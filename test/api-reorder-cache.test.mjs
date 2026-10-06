@@ -16,7 +16,7 @@ function createEnv({ failBatchAfter = null } = {}) {
   return {
     events,
     env: {
-      NAV_AUTH: {
+      NAV_AUTH1: {
         store,
         async get(key) {
           return store.get(key) ?? null;
@@ -29,7 +29,7 @@ function createEnv({ failBatchAfter = null } = {}) {
           store.delete(key);
         },
       },
-      NAV_DB: {
+      NAV_DB1: {
         prepare(sql) {
           const statement = (params = []) => ({
             sql,
@@ -96,8 +96,8 @@ test('category reorder marks the home cache dirty when a chunk fails midway', as
 
   assert.equal(response.status, 500);
   assert.match(body.message, /D1 batch failed/);
-  assert.equal(env.NAV_AUTH.store.has(getHomeDirtyKey('public')), true);
-  assert.equal(env.NAV_AUTH.store.has(getHomeDirtyKey('private')), true);
+  assert.equal(env.NAV_AUTH1.store.has(getHomeDirtyKey('public')), true);
+  assert.equal(env.NAV_AUTH1.store.has(getHomeDirtyKey('private')), true);
   assert.equal(
     events.filter(event => event === `dirty:${getHomeDirtyKey('public')}`).length,
     1,
@@ -138,7 +138,7 @@ test('site reorder marks the home cache dirty when a chunk fails midway', async 
 
   assert.equal(response.status, 500);
   assert.match(body.message, /D1 batch failed/);
-  assert.equal(env.NAV_AUTH.store.has(getHomeDirtyKey('public')), true);
+  assert.equal(env.NAV_AUTH1.store.has(getHomeDirtyKey('public')), true);
   assert.equal(
     events.filter(event => event === `dirty:${getHomeDirtyKey('public')}`).length,
     1,
@@ -177,6 +177,6 @@ test('single-transaction batch actions still mark the home cache dirty on succes
       2,
       `${payloadCase.action} 只应打一次脏标记（public + private 两个 key）`
     );
-    assert.equal(env.NAV_AUTH.store.has(getHomeDirtyKey('public')), true);
+    assert.equal(env.NAV_AUTH1.store.has(getHomeDirtyKey('public')), true);
   }
 });

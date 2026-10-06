@@ -47,14 +47,14 @@ async function renderHome(settingsRows = [], envOverrides = {}, requestUrl = 'ht
           return new Response(templateHtml);
         },
       },
-      NAV_AUTH: {
+      NAV_AUTH1: {
         async get() {
           return null;
         },
         async put() {},
         async delete() {},
       },
-      NAV_DB: {
+      NAV_DB1: {
         prepare(sql) {
           return createStatement(sql, settingsRows);
         },

@@ -167,8 +167,8 @@ test('POST /api/settings accepts the admin settings payload', async () => {
   const response = await onRequestPost({
     request,
     env: {
-      NAV_AUTH: kv,
-      NAV_DB: db,
+      NAV_AUTH1: kv,
+      NAV_DB1: db,
     },
   });
   const body = await response.json();
@@ -208,8 +208,8 @@ test('POST /api/settings accepts category flow setting directly', async () => {
   const response = await onRequestPost({
     request,
     env: {
-      NAV_AUTH: kv,
-      NAV_DB: db,
+      NAV_AUTH1: kv,
+      NAV_DB1: db,
     },
   });
   const body = await response.json();
@@ -243,8 +243,8 @@ test('POST /api/settings skips unchanged writes but still invalidates caches', a
   const response = await onRequestPost({
     request,
     env: {
-      NAV_AUTH: kv,
-      NAV_DB: db,
+      NAV_AUTH1: kv,
+      NAV_DB1: db,
     },
   });
   const body = await response.json();
@@ -269,7 +269,7 @@ test('GET /api/settings never returns the WebDAV password', async () => {
     headers: { Cookie: 'admin_session=token' },
   });
 
-  const response = await onRequestGet({ request, env: { NAV_AUTH: kv, NAV_DB: db } });
+  const response = await onRequestGet({ request, env: { NAV_AUTH1: kv, NAV_DB1: db } });
   const body = await response.json();
   const raw = JSON.stringify(body);
 
@@ -293,7 +293,7 @@ test('POST /api/settings keeps the stored WebDAV password when field is empty', 
     }),
   });
 
-  const response = await onRequestPost({ request, env: { NAV_AUTH: kv, NAV_DB: db } });
+  const response = await onRequestPost({ request, env: { NAV_AUTH1: kv, NAV_DB1: db } });
   const body = await response.json();
 
   assert.equal(response.status, 200, body.message);
@@ -311,7 +311,7 @@ test('POST /api/settings preserves leading and trailing spaces in the WebDAV pas
     body: JSON.stringify({ webdav_password: password }),
   });
 
-  const response = await onRequestPost({ request, env: { NAV_AUTH: kv, NAV_DB: db } });
+  const response = await onRequestPost({ request, env: { NAV_AUTH1: kv, NAV_DB1: db } });
   const body = await response.json();
 
   assert.equal(response.status, 200, body.message);
@@ -334,7 +334,7 @@ test('POST /api/settings leaves the home cache alone when only WebDAV keys are s
     }),
   });
 
-  const response = await onRequestPost({ request, env: { NAV_AUTH: kv, NAV_DB: db } });
+  const response = await onRequestPost({ request, env: { NAV_AUTH1: kv, NAV_DB1: db } });
   const body = await response.json();
 
   assert.equal(response.status, 200, body.message);
@@ -356,7 +356,7 @@ test('POST /api/settings still invalidates caches when WebDAV keys ride along wi
     }),
   });
 
-  const response = await onRequestPost({ request, env: { NAV_AUTH: kv, NAV_DB: db } });
+  const response = await onRequestPost({ request, env: { NAV_AUTH1: kv, NAV_DB1: db } });
   const body = await response.json();
 
   assert.equal(response.status, 200, body.message);
@@ -374,7 +374,7 @@ test('POST /api/settings rejects a non-http WebDAV URL', async () => {
     body: JSON.stringify({ webdav_url: 'javascript:alert(1)' }),
   });
 
-  const response = await onRequestPost({ request, env: { NAV_AUTH: kv, NAV_DB: db } });
+  const response = await onRequestPost({ request, env: { NAV_AUTH1: kv, NAV_DB1: db } });
   const body = await response.json();
 
   assert.equal(response.status, 400);
@@ -391,7 +391,7 @@ test('POST /api/settings rejects an HTTP WebDAV URL to protect credentials', asy
     body: JSON.stringify({ webdav_url: 'http://dav.example.com/root' }),
   });
 
-  const response = await onRequestPost({ request, env: { NAV_AUTH: kv, NAV_DB: db } });
+  const response = await onRequestPost({ request, env: { NAV_AUTH1: kv, NAV_DB1: db } });
   const body = await response.json();
 
   assert.equal(response.status, 400);
@@ -408,7 +408,7 @@ test('POST /api/settings rejects credentials embedded in the WebDAV URL', async 
     body: JSON.stringify({ webdav_url: 'https://user:secret@dav.example.com/root' }),
   });
 
-  const response = await onRequestPost({ request, env: { NAV_AUTH: kv, NAV_DB: db } });
+  const response = await onRequestPost({ request, env: { NAV_AUTH1: kv, NAV_DB1: db } });
   const body = await response.json();
 
   assert.equal(response.status, 400);
@@ -431,7 +431,7 @@ test('POST /api/settings rejects webdav_dir path traversal via both separators',
       body: JSON.stringify({ webdav_dir: dir }),
     });
 
-    const response = await onRequestPost({ request, env: { NAV_AUTH: kv, NAV_DB: db } });
+    const response = await onRequestPost({ request, env: { NAV_AUTH1: kv, NAV_DB1: db } });
     assert.equal(response.status, 400, `应拒绝 webdav_dir: ${JSON.stringify(dir)}`);
     assert.equal(db.store.has('webdav_dir'), false);
   }
@@ -446,7 +446,7 @@ test('POST /api/settings still accepts ordinary webdav_dir values', async () => 
     body: JSON.stringify({ webdav_dir: 'iori-nav/backup' }),
   });
 
-  const response = await onRequestPost({ request, env: { NAV_AUTH: kv, NAV_DB: db } });
+  const response = await onRequestPost({ request, env: { NAV_AUTH1: kv, NAV_DB1: db } });
   const body = await response.json();
 
   assert.equal(response.status, 200, body.message);
@@ -462,7 +462,7 @@ test('POST /api/settings clears the WebDAV password when explicitly sent null', 
     body: JSON.stringify({ webdav_password: null }),
   });
 
-  const response = await onRequestPost({ request, env: { NAV_AUTH: kv, NAV_DB: db } });
+  const response = await onRequestPost({ request, env: { NAV_AUTH1: kv, NAV_DB1: db } });
   const body = await response.json();
 
   // 留空是「不修改」，所以解除配置需要一个显式出口；用 null 而不是带内哨兵字符串
@@ -481,7 +481,7 @@ test('POST /api/settings can store a password that looks like a clear sentinel',
     body: JSON.stringify({ webdav_password: '__CLEAR__' }),
   });
 
-  const response = await onRequestPost({ request, env: { NAV_AUTH: kv, NAV_DB: db } });
+  const response = await onRequestPost({ request, env: { NAV_AUTH1: kv, NAV_DB1: db } });
   const body = await response.json();
 
   assert.equal(response.status, 200, body.message);
@@ -499,7 +499,7 @@ test('POST /api/settings keeps the stored password when the field is absent or e
       body: JSON.stringify(payload),
     });
 
-    const response = await onRequestPost({ request, env: { NAV_AUTH: kv, NAV_DB: db } });
+    const response = await onRequestPost({ request, env: { NAV_AUTH1: kv, NAV_DB1: db } });
     assert.equal(response.status, 200);
     assert.equal(
       db.store.get('webdav_password'),
@@ -516,7 +516,7 @@ test('GET /api/settings reports no password after it is cleared', async () => {
     headers: { Cookie: 'admin_session=token' },
   });
 
-  const response = await onRequestGet({ request, env: { NAV_AUTH: kv, NAV_DB: db } });
+  const response = await onRequestGet({ request, env: { NAV_AUTH1: kv, NAV_DB1: db } });
   const body = await response.json();
 
   assert.equal(response.status, 200);
@@ -543,7 +543,7 @@ test('GET /api/settings returns empty settings when the table is missing', async
 
   const response = await onRequestGet({
     request,
-    env: { NAV_AUTH: kv, NAV_DB: createFailingDb('D1_ERROR: no such table: settings') },
+    env: { NAV_AUTH1: kv, NAV_DB1: createFailingDb('D1_ERROR: no such table: settings') },
   });
   const body = await response.json();
 
@@ -562,8 +562,8 @@ test('GET /api/settings surfaces real DB failures instead of faking empty settin
   const response = await onRequestGet({
     request,
     env: {
-      NAV_AUTH: kv,
-      NAV_DB: createFailingDb('D1_ERROR: timed out running SELECT key, value FROM settings'),
+      NAV_AUTH1: kv,
+      NAV_DB1: createFailingDb('D1_ERROR: timed out running SELECT key, value FROM settings'),
     },
   });
   const body = await response.json();

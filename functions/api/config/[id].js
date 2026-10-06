@@ -7,7 +7,7 @@ import { normalizeBookmarkDesc, normalizeBookmarkLogo, normalizeBookmarkName, no
 export async function onRequestGet(context) {
   const { request, env, params } = context;
   const id = params.id;
-  const { results } = await env.NAV_DB.prepare('SELECT * FROM sites WHERE id = ?').bind(id).all();
+  const { results } = await env.NAV_DB1.prepare('SELECT * FROM sites WHERE id = ?').bind(id).all();
   if (results.length === 0) {
     return errorResponse('config not found', 404);
   }
@@ -33,7 +33,7 @@ export async function onRequestPut(context) {
   }
   
   try {
-    const existing = await env.NAV_DB.prepare('SELECT id, is_private FROM sites WHERE id = ?').bind(id).first();
+    const existing = await env.NAV_DB1.prepare('SELECT id, is_private FROM sites WHERE id = ?').bind(id).first();
     if (!existing) {
       return errorResponse('config not found', 404);
     }
@@ -70,7 +70,7 @@ export async function onRequestPut(context) {
 
     const urlCandidates = getUrlMatchCandidates(rawUrl);
     const placeholders = urlCandidates.map(() => '?').join(',');
-    const duplicate = await env.NAV_DB.prepare(`SELECT id FROM sites WHERE url IN (${placeholders}) AND id != ?`)
+    const duplicate = await env.NAV_DB1.prepare(`SELECT id FROM sites WHERE url IN (${placeholders}) AND id != ?`)
       .bind(...urlCandidates, id)
       .first();
     if (duplicate) {
@@ -81,7 +81,7 @@ export async function onRequestPut(context) {
     sanitizedLogo = buildFaviconUrl(sanitizedUrl, sanitizedLogo, iconAPI);
 
     // Fetch category name
-    const categoryResult = await env.NAV_DB.prepare('SELECT catelog, is_private FROM category WHERE id = ?').bind(catelog_id).first();
+    const categoryResult = await env.NAV_DB1.prepare('SELECT catelog, is_private FROM category WHERE id = ?').bind(catelog_id).first();
     if (!categoryResult) {
       return errorResponse('Category not found.', 400);
     }
@@ -93,7 +93,7 @@ export async function onRequestPut(context) {
         finalIsPrivate = 1;
     }
 
-    const update = await env.NAV_DB.prepare(`
+    const update = await env.NAV_DB1.prepare(`
       UPDATE sites
       SET name = ?, url = ?, logo = ?, desc = ?, catelog_id = ?, catelog_name = ?, sort_order = ?, is_private = ?, update_time = CURRENT_TIMESTAMP
       WHERE id = ?
@@ -121,12 +121,12 @@ export async function onRequestDelete(context) {
   }
 
   try {
-    const existing = await env.NAV_DB.prepare('SELECT id, is_private FROM sites WHERE id = ?').bind(id).first();
+    const existing = await env.NAV_DB1.prepare('SELECT id, is_private FROM sites WHERE id = ?').bind(id).first();
     if (!existing) {
       return errorResponse('config not found', 404);
     }
 
-    const del = await env.NAV_DB.prepare('DELETE FROM sites WHERE id = ?').bind(id).run();
+    const del = await env.NAV_DB1.prepare('DELETE FROM sites WHERE id = ?').bind(id).run();
 
     await markHomeCacheDirty(env, existing.is_private ? 'private' : 'all');
 

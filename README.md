@@ -103,14 +103,14 @@
 ### 步骤 3：创建 D1 数据库
 
 1. 在 Cloudflare 控制台，进入 `存储和数据库` → `D1 SQL 数据库`。
-2. 点击 `创建数据库`，数据库名称输入 `book`，然后创建。
+2. 点击 `创建数据库`，数据库名称输入 `book1`，然后创建。
 
 <img width="2836" height="1298" alt="创建D1数据库" src="https://github.com/user-attachments/assets/644032c6-304c-46cc-b039-9eafbc6f7a6b" />
 
 ### 步骤 4：创建 KV 存储
 
 1. 在 Cloudflare 控制台，进入 `存储和数据库` → `Worker KV`。
-2. 点击 `创建命名空间`，名称输入 `NAV_AUTH`。
+2. 点击 `创建命名空间`，名称输入 `NAV_AUTH1`。
 
     <img width="2744" height="974" alt="创建KV命名空间" src="https://github.com/user-attachments/assets/11d08862-7887-4883-97ce-390780e7fccd" />
 
@@ -124,11 +124,11 @@
 
 1. 进入你刚刚创建的 Pages 项目的 `设置` → `绑定`。
 2. 点击 `添加绑定`，选择 `D1 数据库`：
-    - 变量名称：`NAV_DB`
-    - D1 数据库：选择你创建的 `book`
+    - 变量名称：`NAV_DB1`
+    - D1 数据库：选择你创建的 `book1`
 3. 点击 `添加绑定`，选择 `KV 命名空间`：
-    - 变量名称：`NAV_AUTH`
-    - KV 命名空间：选择你创建的 `NAV_AUTH`
+    - 变量名称：`NAV_AUTH1`
+    - KV 命名空间：选择你创建的 `NAV_AUTH1`
 4. 如需使用 Cloudflare Workers AI，继续点击 `添加绑定`，选择 `Workers AI`：
     - 变量名称：`AI`
 
@@ -160,7 +160,7 @@ npm run build:css
 npm run dev
 
 # 本地执行数据库 schema（可选）
-npx wrangler d1 execute book --local --file=schema.sql
+npx wrangler d1 execute book1 --local --file=schema.sql
 ```
 
 ---
@@ -171,8 +171,8 @@ npx wrangler d1 execute book --local --file=schema.sql
 
 | 绑定名 | 类型 | 说明 |
 | :--- | :--- | :--- |
-| `NAV_DB` | D1 | 主数据库绑定（必需） |
-| `NAV_AUTH` | KV | 会话、限流、缓存标记存储（必需） |
+| `NAV_DB1` | D1 | 主数据库绑定（必需） |
+| `NAV_AUTH1` | KV | 会话、限流、缓存标记存储（必需） |
 ### 2) 条件绑定（Pages 项目设置 -> 绑定）
 
 | 绑定名 | 类型 | 说明 |
@@ -208,7 +208,7 @@ npx wrangler d1 execute book --local --file=schema.sql
 
 > 后台管理页面地址为：`https://你的域名/admin`
 
-后台登录凭据存放在 `NAV_AUTH` KV 中的 `admin_username` 与 `admin_password` 两个键内。登录 `/admin` 时需要在页面表单中输入账号与密码，系统会返回一个 **HttpOnly 会话 Cookie（默认 1 天，可选 1/7/30/60/90 天）**，无需也不再支持在 URL 查询参数中传递凭据。点击后台右上角的 **"退出登录"** 按钮即可立即销毁会话。
+后台登录凭据存放在 `NAV_AUTH1` KV 中的 `admin_username` 与 `admin_password` 两个键内。登录 `/admin` 时需要在页面表单中输入账号与密码，系统会返回一个 **HttpOnly 会话 Cookie（默认 1 天，可选 1/7/30/60/90 天）**，无需也不再支持在 URL 查询参数中传递凭据。点击后台右上角的 **"退出登录"** 按钮即可立即销毁会话。
 
 如需给后台登录与公开投稿增加 Cloudflare Turnstile 人机验证，请在 Cloudflare Turnstile 控制台创建站点后，将站点密钥配置为 `TURNSTILE_SITE_KEY`，机密密钥配置为 `TURNSTILE_SECRET_KEY`。两个变量都为空时会保持原流程；只配置其中一个会提示配置不完整。
 
@@ -243,8 +243,8 @@ npx wrangler d1 execute book --local --file=schema.sql
 
 ## ❗ 常见部署问题
 
-- `/admin` 无法登录或反复跳回登录页：确认已绑定 `NAV_AUTH`，并在该 KV 中创建 `admin_username`、`admin_password`。
-- 首页 500 或数据为空：确认 `NAV_DB` 已正确绑定到 `book` 数据库，且已执行过 `schema.sql`。
+- `/admin` 无法登录或反复跳回登录页：确认已绑定 `NAV_AUTH1`，并在该 KV 中创建 `admin_username`、`admin_password`。
+- 首页 500 或数据为空：确认 `NAV_DB1` 已正确绑定到 `book1` 数据库，且已执行过 `schema.sql`。
 - 前台看不到投稿入口：确认 `ENABLE_PUBLIC_SUBMISSION=true`（字符串或布尔都可，代码会统一转换）。
 - 修改了 `public/css/tailwind.css` 但样式未生效：先执行 `npm run build:css` 再重新部署。
 

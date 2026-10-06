@@ -6,12 +6,12 @@ import { onRequestGet } from '../functions/api/config/index.js';
 test('GET /api/config rejects overlong search keywords before querying database', async () => {
   const request = new Request(`https://example.com/api/config?keyword=${'a'.repeat(101)}`);
   const env = {
-    NAV_AUTH: {
+    NAV_AUTH1: {
       async get() {
         throw new Error('KV should not be queried for invalid keywords');
       },
     },
-    NAV_DB: {
+    NAV_DB1: {
       prepare() {
         throw new Error('DB should not be queried for invalid keywords');
       },
@@ -30,12 +30,12 @@ test('GET /api/config rejects overlong search keywords before querying database'
 function createPaginationEnv({ sessionValue = null } = {}) {
   const listCalls = [];
   const env = {
-    NAV_AUTH: {
+    NAV_AUTH1: {
       async get(key) {
         return key.startsWith('session_') ? sessionValue : null;
       },
     },
-    NAV_DB: {
+    NAV_DB1: {
       prepare(sql) {
         return {
           bind(...params) {

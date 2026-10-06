@@ -24,14 +24,14 @@ export async function onRequestPost(context) {
 
     // 检查父分类存在性
     if (parentId !== 0) {
-      parentCategory = await env.NAV_DB.prepare('SELECT id, is_private FROM category WHERE id = ?').bind(parentId).first();
+      parentCategory = await env.NAV_DB1.prepare('SELECT id, is_private FROM category WHERE id = ?').bind(parentId).first();
       if (!parentCategory) {
         return errorResponse('父分类不存在', 400);
       }
     }
 
     // 检查在同一个父分类下，分类名称是否已存在
-    const existing = await env.NAV_DB.prepare(
+    const existing = await env.NAV_DB1.prepare(
       'SELECT catelog FROM category WHERE catelog = ? AND parent_id = ?'
     ).bind(categoryName, parentId).first();
 
@@ -44,7 +44,7 @@ export async function onRequestPost(context) {
     const isPrivate = parentCategory?.is_private === 1 ? 1 : (body.is_private ? 1 : 0);
 
     // 插入新分类
-    await env.NAV_DB.prepare(`
+    await env.NAV_DB1.prepare(`
       INSERT INTO category (catelog, sort_order, parent_id, is_private)
       VALUES (?, ?, ?, ?)
     `).bind(categoryName, sortOrderValue, parentId, isPrivate).run();
