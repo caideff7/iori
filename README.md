@@ -1,7 +1,7 @@
-# 灰色轨迹 - 精品网址导航站
+# 探月 - 精品网址导航站
 
 <p align="center">
-  一个优雅、快速、易于部署的书签（网址）收藏与分享平台，完全基于 Cloudflare 全家桶构建。
+  一个分享免费的常用在线工具、有意思的网页，和实时资讯的网站。
 </p>
 
 <p align="center">
@@ -184,9 +184,9 @@ npx wrangler d1 execute book1 --local --file=schema.sql
 | 变量名 | 默认值 | 说明 |
 | :--- | :--- | :--- |
 | `ENABLE_PUBLIC_SUBMISSION` | `false` | 是否允许访客投稿 |
-| `SITE_NAME` | `灰色轨迹` | 首页站点名称（环境变量兜底） |
-| `SITE_DESCRIPTION` | `一个优雅、快速、易于部署的书签（网址）收藏与分享平台，完全基于 Cloudflare 全家桶构建` | 首页副标题（环境变量兜底） |
-| `FOOTER_TEXT` | `曾梦想仗剑走天涯` | 首页页脚文案 |
+| `SITE_NAME` | `探月` | 首页站点名称（环境变量兜底） |
+| `SITE_DESCRIPTION` | `一个分享免费的常用在线工具、有意思的网页，和实时资讯的网站` | 首页副标题（环境变量兜底） |
+| `FOOTER_TEXT` | `发` | 首页页脚文案 |
 | `ICON_API` | `https://faviconsnap.com/api/favicon?url=` | 自动补全 logo 的接口前缀 |
 | `AI_REQUEST_DELAY` | `1500` | AI 一键补全描述调用间隔（毫秒） |
 | `WORKERS_AI_MODEL` | `@cf/google/gemma-4-26b-a4b-it` | Workers AI 模型兜底；后台 AI 设置中保存的模型优先 |

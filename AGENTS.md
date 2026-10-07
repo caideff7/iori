@@ -4,7 +4,7 @@
 
 ## 项目概述
 
-**iori-nav（灰色轨迹）** 是一个基于 Cloudflare 全家桶构建的书签导航站点。
+**iori-nav（探月）** 是一个基于 Cloudflare 全家桶构建的书签导航站点。
 
 - **语言**: JavaScript（ES6+，无 TypeScript）
 - **平台**: Cloudflare Pages + Workers + D1 + KV
@@ -172,9 +172,9 @@ function showToast(message) {
 | `NAV_DB1` | D1 数据库绑定 | 必需 |
 | `NAV_AUTH1` | KV 存储绑定 | 必需 |
 | `ENABLE_PUBLIC_SUBMISSION` | 允许访客提交 | `false` |
-| `SITE_NAME` | 网站名称 | `灰色轨迹` |
-| `SITE_DESCRIPTION` | 首页副标题 | `一个优雅、快速、易于部署的书签（网址）收藏与分享平台，完全基于 Cloudflare 全家桶构建` |
-| `FOOTER_TEXT` | 首页页脚 | `曾梦想仗剑走天涯` |
+| `SITE_NAME` | 网站名称 | `探月` |
+| `SITE_DESCRIPTION` | 首页副标题 | `一个分享免费的常用在线工具、有意思的网页，和实时资讯的网站` |
+| `FOOTER_TEXT` | 首页页脚 | `发` |
 | `ICON_API` | 图标 API | `https://faviconsnap.com/api/favicon?url=` |
 | `AI_REQUEST_DELAY` | AI 描述补全调用间隔（毫秒） | `1500` |
 

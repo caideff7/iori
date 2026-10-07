@@ -266,9 +266,9 @@ export async function onRequest(context) {
   const headingActiveAttr = catalogExists ? escapeHTML(currentCatalogName) : '';
   const submissionEnabled = String(env.ENABLE_PUBLIC_SUBMISSION) === 'true';
   const submissionClass = submissionEnabled ? '' : '!hidden';
-  const siteName = S.home_site_name || env.SITE_NAME || '灰色轨迹';
-  const siteDescription = S.home_site_description || env.SITE_DESCRIPTION || '一个优雅、快速、易于部署的书签（网址）收藏与分享平台，完全基于 Cloudflare 全家桶构建';
-  const footerText = S.home_footer_text || env.FOOTER_TEXT || '曾梦想仗剑走天涯';
+  const siteName = S.home_site_name || env.SITE_NAME || '探月';
+  const siteDescription = S.home_site_description || env.SITE_DESCRIPTION || '一个分享免费的常用在线工具、有意思的网页，和实时资讯的网站';
+  const footerText = S.home_footer_text || env.FOOTER_TEXT || '发';
   const titleStyle = getStyleStr(S.home_title_size, S.home_title_color, S.home_title_font);
   const subtitleStyle = getStyleStr(S.home_subtitle_size, S.home_subtitle_color, S.home_subtitle_font);
   const statsStyle = getStyleStr(S.home_stats_size, S.home_stats_color, S.home_stats_font);

@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## 项目概览
 
-**iori-nav（灰色轨迹）** 是一个完全跑在 Cloudflare 上的书签导航站。
+**iori-nav（探月）** 是一个完全跑在 Cloudflare 上的书签导航站。
 
 - **运行平台**：Cloudflare Pages + Pages Functions（Workers）+ D1（SQLite）+ KV
 - **语言**：纯 JavaScript（ES Modules，**无 TypeScript**）
